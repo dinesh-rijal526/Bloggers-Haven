@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }} Articles - Blogger's Haven{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Category Header -->
+  <section class="page-header">
+    <div class="page-header-content">
+      <h1 class="page-title">{{ category.name }} Articles</h1>
+    </div>
+  </section>
+
+
+
+    {% if articles %}
+      <div class="articles-grid">
+        {% for article in articles %}
+          <article class="article-card">
+            <div class="card-media">
+              <a href="{% url 'article_detail' article.slug %}" class="media-link">
+                {% if article.cover_image %}
+                  <img src="{{ article.cover_image.url }}" 
+                       alt="{{ article.title }} cover image" 
+                       loading="lazy" />
+                {% else %}
+                  <div class="placeholder-image">
+                    <div class="placeholder-icon">📄</div>
+                    <span class="placeholder-text">No Image</span>
+                  </div>
+                {% endif %}
+              </a>
+              {% if article.category %}
+                <span class="article-category">{{ article.category.name }}</span>
+              {% endif %}
+            </div>
+            
+            <div class="card-content">
+              <div class="article-meta">
+                {% if article.author %}
+                  <div class="author-info">
+                    <img src="{{ article.author.profile.avatar.url }}" 
+                         alt="{{ article.author }}" class="author-avatar" />
+                    <span class="author-name">{{ article.author }}</span>
+                  </div>
+                {% endif %}
+                {% if article.published_at %}
+                  <time datetime="{{ article.published_at|date:'c' }}" class="publish-date">
+                    {{ article.published_at|date:"M d, Y" }}
+                  </time>
+                {% endif %}
+              </div>
+              
+              <h3 class="article-title">
+                <a href="{% url 'article_detail' article.slug %}">{{ article.title }}</a>
+              </h3>
+              
+              {% if article.content %}
+                <p class="article-excerpt">{{ article.content|truncatewords:25 }}</p>
+              {% endif %}
+              
+              <div class="card-footer">
+                <a class="read-more-btn" href="{% url 'article_detail' article.slug %}">
+                  Read Article
+                  <span class="btn-arrow">→</span>
+                </a>
+                <div class="article-stats">
+                  <span class="stat-item">
+                    <span class="stat-icon">❤️</span>
+                    {{ article.likes.count|default:"0" }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">📝</div>
+        <h3 class="empty-title">No articles found</h3>
+        <p class="empty-description">
+          There are no articles in this category yet. Be the first to write one!
+        </p>
+        {% if user.is_authenticated %}
+          <a class="btn btn-primary" href="{% url 'create_article' %}?category={{ category.id }}">Write Article</a>
+        {% else %}
+          <div class="empty-actions">
+            <a class="btn btn-primary" href="{% url 'register_page' %}">Join Community</a>
+            <a class="btn btn-ghost" href="{% url 'home' %}">View All Categories</a>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Latest Articles • Blogger's Haven{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">Welcome to Blogger's Haven</h1>
+        <p class="hero-subtitle">Discover amazing stories, insights, and ideas from our community of passionate writers</p>
+        {% if not user.is_authenticated %}
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-large" href="{% url 'register_page' %}">Start Writing</a>
+            <a class="btn btn-ghost btn-large" href="#articles">Explore Articles</a>
+          </div>
+        {% endif %}
+      </div>
+      <div class="hero-visual">
+        <div class="floating-cards">
+          <div class="floating-card card-1">
+            <div class="card-content">
+              <div class="card-icon">📝</div>
+              <h3>Write</h3>
+              <p>Share your thoughts</p>
+            </div>
+          </div>
+          <div class="floating-card card-2">
+            <div class="card-content">
+              <div class="card-icon">🌟</div>
+              <h3>Discover</h3>
+              <p>Find amazing content</p>
+            </div>
+          </div>
+          <div class="floating-card card-3">
+            <div class="card-content">
+              <div class="card-icon">🤝</div>
+              <h3>Connect</h3>
+              <p>Join the community</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- Category Filter -->
+    <section id="categories" class="category-section">
+      <div class="section-header">
+        <h2 class="section-title">Browse by Category</h2>
+        <p class="section-subtitle">Find articles that match your interests</p>
+      </div>
+      
+      <div class="category-filter">
+        <div class="pill-container">
+          <a class="pill {% if not selected_category %}pill-active{% endif %}"
+             href="{% url 'home' %}">
+            <span class="pill-icon">🌟</span>
+            All Articles
+          </a>
+          {% for cat in categories %}
+            <a class="pill {% if selected_category == cat.slug %}pill-active{% endif %}"
+               href="{% url 'category_articles' cat.slug %}">
+              <span class="pill-icon">{{ cat.icon|default:"📂" }}</span>
+              {{ cat.name }}
+              <span class="pill-count">{{ cat.num_articles }}</span>
+            </a>
+          {% empty %}
+            <span class="pill pill-disabled">No categories available</span>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Articles Grid -->
+    <section id="articles" class="articles-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          {% if selected_category %}
+            {{ selected_category|title }} Articles
+          {% else %}
+            Latest Articles
+          {% endif %}
+        </h2>
+        <p class="section-subtitle">
+          {% if articles %}
+            {{ articles|length }} article{{ articles|length|pluralize }} found
+          {% else %}
+            No articles to display
+          {% endif %}
+        </p>
+      </div>
+
+      {% if articles %}
+        <div class="articles-grid">
+          {% for article in articles %}
+            <article class="article-card">
+              <div class="card-media">
+                <a href="{% url 'article_detail' article.slug %}" class="media-link">
+                  {% if article.cover_image %}
+                    <img src="{{ article.cover_image.url }}" 
+                         alt="{{ article.title }} cover image" 
+                         loading="lazy" />
+                  {% else %}
+                    <div class="placeholder-image">
+                      <div class="placeholder-icon">📄</div>
+                      <span class="placeholder-text">No Image</span>
+                    </div>
+                  {% endif %}
+                </a>
+                {% if article.category %}
+                  <span class="article-category">{{ article.category.name }}</span>
+                {% endif %}
+              </div>
+              
+              <div class="card-content">
+                <div class="article-meta">
+                  {% if article.author %}
+                    <div class="author-info">
+                      <img src="{{ article.author.profile.avatar.url }}" 
+                           alt="{{ article.author }}" class="author-avatar" />
+                      <span class="author-name">{{ article.author }}</span>
+                    </div>
+                  {% endif %}
+                  {% if article.published_at %}
+                    <time datetime="{{ article.published_at|date:'c' }}" class="publish-date">
+                      {{ article.published_at|date:"M d, Y" }}
+                    </time>
+                  {% endif %}
+                </div>
+                
+                <h3 class="article-title">
+                  <a href="{% url 'article_detail' article.slug %}">{{ article.title }}</a>
+                </h3>
+                
+                {% if article.content %}
+                  <p class="article-excerpt">{{ article.content|truncatewords:25 }}</p>
+                {% endif %}
+                
+                <div class="card-footer">
+                  <a class="read-more-btn" href="{% url 'article_detail' article.slug %}">
+                    Read Article
+                    <span class="btn-arrow">→</span>
+                  </a>
+                    <div class="article-stats">
+                      <span class="stat-item">
+                        <span class="stat-icon">Likes ❤️</span>
+                        {{ article.likes.count|default:"0" }}
+                      </span>
+                    </div>
+                </div>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">📝</div>
+          <h3 class="empty-title">No articles found</h3>
+          <p class="empty-description">
+            {% if selected_category %}
+              No articles in this category yet. Try browsing other categories or check back later.
+            {% else %}
+              Be the first to share your story with our community!
+            {% endif %}
+          </p>
+          {% if user.is_authenticated %}
+            <a class="btn btn-primary" href="{% url 'create_article' %}">Write First Article</a>
+          {% else %}
+            <div class="empty-actions">
+              <a class="btn btn-primary" href="{% url 'register_page' %}">Join Community</a>
+              <a class="btn btn-ghost" href="{% url 'home' %}">View All Categories</a>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}

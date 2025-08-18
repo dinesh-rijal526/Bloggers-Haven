@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile - {{ user.get_full_name|default:user.username }} | Blogger's Haven{% endblock %}
+
+{% block content %}
+<div class="container">
+  <section class="page-header">
+    <h1 class="page-title">Your Profile</h1>
+    <p class="page-subtitle">Manage your account details and see your article stats.</p>
+  </section>
+
+  <div class="profile-layout">
+    <aside class="panel">
+      <div class="profile-card">
+        <div class="profile-avatar">
+          {% if profile.avatar %}
+            <img class="avatar-img" src="{{ profile.avatar.url }}" alt="{{ request.user.username }}'s avatar">
+          {% else %}
+            <div class="avatar-circle avatar-lg" aria-hidden="true">{{ request.user.username|first|upper }}</div>
+          {% endif %}
+        </div>
+        <div class="profile-meta">
+          <h2 class="profile-name">{{ request.user.get_full_name|default:request.user.username }}</h2>
+          {% if profile.bio %}
+            <p class="muted">{{ profile.bio }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Replaced stat-grid with simple text lines -->
+        <div class="profile-stats">
+          <div class="stat-line">Published: {{ article_stats.published|default:"0" }}</div>
+          <div class="stat-line">Drafts: {{ article_stats.draft|default:"0" }}</div>
+          <div class="stat-line">Total: {{ article_stats.total|default:"0" }}</div>
+        </div>
+
+        <div class="panel-actions">
+          <a class="btn btn-primary" href="{% url 'create_article' %}">New Article</a>
+          <a class="btn btn-secondary" href="{% url 'profile_update' %}">Edit Profile</a>
+        </div>
+      </div>
+    </aside>
+
+    <section class="profile-main">
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title">Your Articles</h3>
+          <a class="btn btn-ghost" href="{% url 'create_article' %}">Create</a>
+        </div>
+
+        {% if user_articles %}
+          <div class="articles-grid">
+            {% for article in user_articles %}
+              <article class="article-card">
+                <div class="card-media">
+                  {% if article.status == 'published' %}
+                  <a href="{% url 'article_detail' article.slug %}" class="media-link">
+                    {% endif %}
+                    {% if article.cover_image %}
+                      <img src="{{ article.cover_image.url }}" 
+                           alt="{{ article.title }} cover image" 
+                           loading="lazy" />
+                    {% else %}
+                      <div class="placeholder-image">
+                        <div class="placeholder-icon">📄</div>
+                        <span class="placeholder-text">No Image</span>
+                      </div>
+                    {% endif %}
+                  </a>
+                  {% if article.category %}
+                    <span class="article-category">{{ article.category.name }}</span>
+                  {% endif %}
+                  {% if not article.published_at %}
+                    <span class="article-status draft">Draft</span>
+                  {% endif %}
+                </div>
+                
+                <div class="card-content">
+                  <div class="article-meta">
+                    <div class="author-info">
+                      <img src="{{ profile.avatar.url }}" 
+                           alt="{{ article.author }}" class="author-avatar" />
+                      <span class="author-name">{{ request.user.get_full_name|default:request.user.username }}</span>
+                    </div>
+                    {% if article.published_at %}
+                      <time datetime="{{ article.published_at|date:'c' }}" class="publish-date">
+                        {{ article.published_at|date:"M d, Y" }}
+                      </time>
+                    {% else %}
+                      <span class="publish-date draft-text">Not published</span>
+                    {% endif %}
+                  </div>
+                  
+                  <h3 class="article-title">
+                    {% if article.status == 'published' %}
+                    <a href="{% url 'article_detail' article.slug %}">{{ article.title }}</a>
+                    {% endif %}
+                  </h3>
+                  
+                  {% if article.content %}
+                    <p class="article-excerpt">{{ article.content|truncatewords:20 }}</p>
+                  {% endif %}
+                  
+                  <div class="card-footer">
+                    <div class="profile-actions">
+                      <a class="btn btn-ghost btn-sm" href="{% url 'edit_article' article.slug %}">
+                        Edit
+                      </a>
+                      <a class="btn btn-danger-ghost btn-sm" href="{% url 'delete_article' article.slug %}">
+                        Delete
+                      </a>
+                    </div>
+                    <div class="article-stats">
+                      <span class="stat-item">
+                        <span class="stat-icon">Likes ❤️</span>
+                        {{ article.likes.count|default:"0" }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state">
+            <h4>No articles yet</h4>
+            <p class="muted">Start writing your first article.</p>
+            <a class="btn btn-primary" href="{% url 'create_article' %}">Create Article</a>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

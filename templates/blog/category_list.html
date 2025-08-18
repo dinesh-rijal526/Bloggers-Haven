@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Categories - Blogger's Haven{% endblock %}
+
+{% block content %}
+<div class="container">
+  <section class="page-header">
+    <div class="page-header-content">
+      <h1 class="page-title">Explore Categories</h1>
+      <p class="page-subtitle">Discover articles organized by topics that interest you</p>
+    </div>
+  </section>
+
+  <section class="category-controls">
+    <form method="GET" class="search-form">
+      <div class="search-container">
+        <div class="search-wrapper">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input type="text" class="search-input" name="search" placeholder="Search categories..." value="{{ search_query }}">
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          Search
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="categories-section">
+    <div class="categories-grid">
+      {% for category in categories %}
+        <!-- Entire card is now a clickable link -->
+        <a href="{% url 'category_articles' category.slug %}" class="category-card">
+          <div class="category-image">
+            {% if category.image %}
+              <img src="{{ category.image.url }}" alt="{{ category.name }}" class="category-img">
+            {% else %}
+              <div class="category-icon-fallback">
+                {% if category.name == "Technology" %}📱
+                {% elif category.name == "Travel" %}✈️
+                {% elif category.name == "Food" %}🍽️
+                {% elif category.name == "Health" %}💪
+                {% elif category.name == "Business" %}💼
+                {% elif category.name == "Lifestyle" %}🌟
+                {% elif category.name == "Education" %}📚
+                {% elif category.name == "Sports" %}⚽
+                {% else %}📝
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="category-content">
+            <div class="category-header">
+              <h3 class="category-name">{{ category.name }}</h3>
+            </div>
+            
+            <div class="category-stats">
+              <div class="stat-item">
+                <span class="stat-number">{{ category.published_count }}</span>
+                <span class="stat-label">Articles</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{{ category.author_count }}</span>
+                <span class="stat-label">Authors</span>
+              </div>
+            </div>
+            
+            <p class="category-description">
+              {% if category.description %}
+                {{ category.description|truncatewords:15 }}
+              {% else %}
+                Explore articles about {{ category.name|lower }} and discover new insights.
+              {% endif %}
+            </p>
+          </div>
+        </a>
+      {% empty %}
+      <div class="empty-state">
+        <div class="empty-icon">📂</div>
+        <h3 class="empty-title">No Categories Found</h3>
+        <p class="empty-description">
+          {% if search_query %}
+            No categories found matching "{{ search_query }}". Try a different search term.
+          {% else %}
+            Categories will appear here once they are created.
+          {% endif %}
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% if popular_categories %}
+  <section class="popular-section">
+    <div class="section-header">
+      <h2 class="section-title">Popular Categories</h2>
+      <p class="section-subtitle">Most active categories with the highest number of articles</p>
+    </div>
+    <div class="popular-grid">
+      {% for category in popular_categories %}
+      <a href="{% url 'category_articles' category.slug %}" class="popular-card">
+        <div class="popular-icon">
+          {% if category.name == "Technology" %}📱
+          {% elif category.name == "Travel" %}✈️
+          {% elif category.name == "Food" %}🍽️
+          {% elif category.name == "Health" %}💪
+          {% elif category.name == "Business" %}💼
+          {% elif category.name == "Lifestyle" %}🌟
+          {% elif category.name == "Education" %}📚
+          {% elif category.name == "Sports" %}⚽
+          {% else %}📝
+          {% endif %}
+        </div>
+        <div class="popular-content">
+          <h4 class="popular-name">{{ category.name }}</h4>
+          <span class="popular-count">{{ category.article_count }} articles</span>
+        </div>
+        <div class="popular-arrow">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

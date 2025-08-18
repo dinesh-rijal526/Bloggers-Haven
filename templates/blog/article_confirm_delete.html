@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Delete “{{ article.title }}” • Blogger's Haven{% endblock %}
+{% block content %}
+<main class="main-content">
+  <div class="container confirm-container">
+    <section class="confirm-card">
+      <h1 class="page-title">Delete Article</h1>
+      <p class="confirm-text">Are you sure you want to delete the article “<strong>{{ article.title }}</strong>”? This action cannot be undone.</p>
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-actions danger-actions">
+          <button class="btn btn-danger" type="submit">Yes, delete</button>
+          <a class="btn btn-ghost" href="{% url 'article_detail' article.slug %}">Cancel</a>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>
+{% endblock %}

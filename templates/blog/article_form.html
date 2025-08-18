@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}
+{% if article %}Edit Article{% else %}Create Article{% endif %} • Blogger's Haven
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+  <div class="container editor-container">
+    <h1 class="page-title">
+      {% if article %}Edit Article{% else %}Create Article{% endif %}
+    </h1>
+    <form method="post" enctype="multipart/form-data" class="editor-form">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="title">Article Title</label>
+        <input type="text" id="title" name="title" class="form-input" placeholder="Enter article title" value="{{ article.title|default:'' }}" required />
+      </div>
+      <div class="form-group">
+        <label>Publication Status</label>
+        <div class="status-options">
+          {% for code, label in status_choices %}
+          <label class="status-option">
+            <input type="radio" name="status" value="{{ code }}" {% if article and article.status == code %}checked{% endif %} {% if not article and forloop.first %}checked{% endif %} />
+            {{ label }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="content">Article Content</label>
+        <textarea id="content" name="content" class="form-textarea" placeholder="Start writing your article here...">{{ article.content|default:'' }}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Categories</label>
+        {% if categories %}
+        <div class="category-grid">
+          {% for c in categories %}
+          <label class="category-item">
+            <input type="checkbox" name="categories" value="{{ c.id }}" {% if article and c in article.categories.all %}checked{% endif %} />
+            {{ c.name }}
+          </label>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p>No categories available.</p>
+        {% endif %}
+      </div>
+      <div class="form-group">
+        <label for="cover_image">Cover Image</label>
+        <input type="file" id="cover_image" name="cover_image" accept="image/*" />
+        {% if article and article.cover_image %}
+        <p>Current image: <img src="{{ article.cover_image.url }}" alt="Cover image" class="cover-preview" /></p>
+        {% endif %}
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{% if article %}Update Article{% else %}Create Article{% endif %}</button>
+        <a href="{% url 'profile' %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

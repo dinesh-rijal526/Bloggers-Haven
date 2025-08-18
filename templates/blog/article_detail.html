@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }} • Blogger's Haven{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="article-wrapper">
+    <article class="article-detail">
+      <header class="article-header">
+        <h1 class="article-title">{{ article.title }}</h1>
+        
+        <div class="article-meta">
+          {% if article.author %}
+            <div class="author-info">
+              <!-- replaced letter avatar with actual user avatar image -->
+              <div class="author-avatar">
+                {% if article.author.profile.avatar %}
+                  <img src="{{ article.author.profile.avatar.url }}" alt="{{ article.author.username }}" class="avatar-img">
+                {% else %}
+                  <img src="/placeholder.svg?height=40&width=40" alt="{{ article.author.username }}" class="avatar-img">
+                {% endif %}
+              </div>
+              <span class="author-name">{{ article.author.username }}</span>
+            </div>
+          {% endif %}
+          {% if article.published_at %}
+            <span class="meta-dot">•</span>
+            <time datetime="{{ article.published_at|date:'c' }}">{{ article.published_at|date:"M d, Y" }}</time>
+          {% endif %}
+        </div>
+
+        {% if article.categories.all %}
+          <div class="article-categories">
+            {% for c in article.categories.all %}
+              <span class="category-tag">{{ c.name }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </header>
+
+      {% if article.cover_image %}
+        <div class="article-image">
+          <img src="{{ article.cover_image.url }}" alt="{{ article.title }}">
+        </div>
+      {% endif %}
+
+      <div class="article-content">
+        {{ article.content|linebreaks }}
+      </div>
+
+      <div class="article-actions">
+        <form method="post" action="{% url 'toggle_like' article.slug %}" class="like-form">
+          {% csrf_token %}
+          <button class="action-btn like-btn {% if liked %}liked{% endif %}" type="submit">
+            <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <span>{{ total_likes }}</span>
+          </button>
+        </form>
+
+        {% if user.is_authenticated and user == article.author %}
+          <a class="action-btn edit-btn" href="{% url 'edit_article' article.slug %}">
+            <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Edit
+          </a>
+        {% endif %}
+      </div>
+    </article>
+
+    <!-- Moved comments section to the end after article content -->
+    <section class="comments-section">
+      <h2 class="comments-title">Comments ({{ comments.count }})</h2>
+
+      {% if user.is_authenticated %}
+        <form class="comment-form" method="post" action="{% url 'add_comment' article.slug %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <textarea name="body" rows="4" placeholder="Write your comment..." class="comment-input" required></textarea>
+          </div>
+          <button class="comment-submit-btn" type="submit">Post Comment</button>
+        </form>
+      {% else %}
+        <div class="login-prompt">
+          <p>Please <a href="{% url 'login_page' %}" class="login-link">log in</a> to comment.</p>
+        </div>
+      {% endif %}
+
+      <div class="comments-list">
+        {% for comment in comments %}
+          <div class="comment">
+            <div class="comment-header">
+              <div class="comment-author">
+                <!-- replaced letter avatar with actual user avatar image -->
+                <div class="comment-avatar">
+                  {% if comment.user.profile.avatar %}
+                    <img src="{{ comment.user.profile.avatar.url }}" alt="{{ comment.user.username }}" class="avatar-img">
+                  {% else %}
+                    <img src="/placeholder.svg?height=32&width=32" alt="{{ comment.user.username }}" class="avatar-img">
+                  {% endif %}
+                </div>
+                <div class="comment-info">
+                  <strong>{{ comment.user.username }}</strong>
+                  <time>{{ comment.created_at|date:"M d, Y" }}</time>
+                </div>
+              </div>
+              {% if user.is_authenticated and comment.user_id == user.id %}
+                <form method="post" action="{% url 'delete_comment' comment.id %}" class="delete-form">
+                  {% csrf_token %}
+                  <button class="delete-btn" type="submit" title="Delete">×</button>
+                </form>
+              {% endif %}
+            </div>
+            <div class="comment-text">
+              {{ comment.body|linebreaksbr }}
+            </div>
+          </div>
+        {% empty %}
+          <div class="no-comments">
+            <p>No comments yet. Be the first to comment!</p>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}
