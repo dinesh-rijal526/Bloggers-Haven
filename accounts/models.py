@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 def get_default_avatar_path():
-    return 'avatars/default.png'  
+    return 'https://res.cloudinary.com/dhtgmo33l/image/upload/v1755492210/default_dfilos.png'  
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
