@@ -78,7 +78,11 @@
                 <div class="card-content">
                   <div class="article-meta">
                     <div class="author-info">
-                      <img src="{{ profile.avatar.url }}" 
+                        {% if profile.avatar %}
+                          <img class="avatar-img" src="{{ profile.avatar.url }}" alt="{{ request.user.username }}'s avatar">
+                        {% else %}
+                          <img class="avatar-img" src="{% static 'images/default.png' %}" alt="{{ request.user.username }}'s avatar">
+                        {% endif %}
                            alt="{{ article.author }}" class="author-avatar" />
                       <span class="author-name">{{ request.user.get_full_name|default:request.user.username }}</span>
                     </div>
