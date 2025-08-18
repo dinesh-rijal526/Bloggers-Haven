@@ -123,8 +123,8 @@
                         <img class="avatar-img" src="{{ article.author.profile.avatar.url }}" alt="{{ request.user.username }}'s avatar">
                       {% else %}
                         <img class="avatar-img" src="{% static 'images/default.png' %}" alt="{{ request.user.username }}'s avatar">
+                        alt="{{ article.author }}" class="author-avatar" />
                       {% endif %}
-                           alt="{{ article.author }}" class="author-avatar" />
                       <span class="author-name">{{ article.author }}</span>
                     </div>
                   {% endif %}

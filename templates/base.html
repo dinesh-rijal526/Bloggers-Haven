@@ -59,7 +59,7 @@
               <div class="user-menu">
                 <button class="user-avatar" aria-label="User menu">
                   {% if user.profile.avatar %}
-                    <img class="avatar-img" src="{{ profile.avatar.url }}" alt="{{ request.user.username }}'s avatar">
+                    <img class="avatar-img" src="{{ user.profile.avatar.url }}" alt="{{ request.user.username }}'s avatar">
                   {% else %}
                     <img class="avatar-img" src="{% static 'images/default.png' %}" alt="{{ request.user.username }}'s avatar">
                   {% endif %}
