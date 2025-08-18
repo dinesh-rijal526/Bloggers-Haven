@@ -15,9 +15,9 @@
       <div class="profile-card">
         <div class="profile-avatar">
           {% if profile.avatar %}
-            <img src="{{ user.profile.avatar.url|default:'https://res.cloudinary.com/dhtgmo33l/image/upload/v1755492210/default_dfilos.png' }}" alt="Avatar">
+            <img class="avatar-img" src="{{ profile.avatar.url }}" alt="{{ request.user.username }}'s avatar">
           {% else %}
-            <div class="avatar-circle avatar-lg" aria-hidden="true">{{ request.user.username|first|upper }}</div>
+            <img class="avatar-img" src="{% static 'images/default.png' %}" alt="{{ request.user.username }}'s avatar">
           {% endif %}
         </div>
         <div class="profile-meta">

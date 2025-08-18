@@ -11,11 +11,5 @@ class Profile(models.Model):
     )
     dark_mode = models.BooleanField(default=False)
 
-    def save(self, *args, **kwargs):
-        if not self.avatar:
-            self.avatar = 'https://res.cloudinary.com/dhtgmo33l/image/upload/v1755492210/default_dfilos.png'
-        super().save(*args, **kwargs)
-
-
     def __str__(self):
         return f"{self.user.username}'s Profile"
