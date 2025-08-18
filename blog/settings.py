@@ -36,7 +36,7 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['bloggers-haven.onrender.com']
 
 SITE_ID = 4
 
