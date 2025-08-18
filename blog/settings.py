@@ -164,15 +164,17 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']  
-STATIC_ROOT = BASE_DIR / 'staticfiles'   
+STATIC_ROOT = BASE_DIR / 'staticfiles' 
+MEDIA_URL = '/media/'  
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
-}  
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+} 
 
-
-MEDIA_URL = '/media/'
 
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
