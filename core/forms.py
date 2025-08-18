@@ -8,8 +8,8 @@ class ArticleForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'rows': 15, 'class': 'markdown-editor'}),
             'status': forms.RadioSelect(choices=[
-                ('draft', 'Save as Draft'),
-                ('published', 'Publish Immediately')
+                ('published', 'Publish Immediately'),
+                ('draft', 'Save as Draft')
             ])
         }
         help_texts = {
