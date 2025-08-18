@@ -82,8 +82,9 @@
                           <img class="avatar-img" src="{{ profile.avatar.url }}" alt="{{ request.user.username }}'s avatar">
                         {% else %}
                           <img class="avatar-img" src="{% static 'images/default.png' %}" alt="{{ request.user.username }}'s avatar">
-                        {% endif %}
                            alt="{{ article.author }}" class="author-avatar" />
+                        {% endif %}
+                          
                       <span class="author-name">{{ request.user.get_full_name|default:request.user.username }}</span>
                     </div>
                     {% if article.published_at %}
