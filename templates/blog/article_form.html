@@ -18,10 +18,10 @@
       <div class="form-group">
         <label>Publication Status</label>
         <div class="status-options">
-          {% for code, label in status_choices %}
+          {% for draft, publish in status_choices %}
           <label class="status-option">
-            <input type="radio" name="status" value="{{ code }}" {% if article and article.status == code %}checked{% endif %} {% if not article and forloop.first %}checked{% endif %} />
-            {{ label }}
+            <input type="radio" name="status" value="{{ publish }}" {% if article and article.status == publish %}checked{% endif %} {% if not article and forloop.first %}checked{% endif %} />
+            {{ draft }}
           </label>
           {% endfor %}
         </div>
