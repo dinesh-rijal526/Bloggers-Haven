@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = False
 
 
-ALLOWED_HOSTS = ['bloggers-haven.onrender.com']
+ALLOWED_HOSTS = ["bloggers-haven.onrender.com", "www.bloggers-haven.onrender.com"]
 
 SITE_ID = 4
 
